@@ -1,0 +1,4 @@
+(1) In the one-process benchmark, the CLI process used about 393,352 KB of unique memory (USS), i.e. 402,792,448 bytes.
+(2) While running five instances at the same time, one CLI process used about 393,336 KB of unique memory (USS), i.e. 402,776,064 bytes.
+(3) The normal processes use close to 390,000 KB of memory per process, and their RSS, PSS, and USS values are close enough. 
+(4) In my normal kernel run, I observed 0 major page faults and 1668 minor page faults.

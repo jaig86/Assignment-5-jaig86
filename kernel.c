@@ -32,7 +32,96 @@ struct pixel add(struct pixel p1, struct pixel p2) {
  * Returns a pointer to a newly allocated image with the same dimensions as img.
  *
  */
-struct image* apply_kernel(struct image* img, int* kernel, int ksize, float normalize) {
+struct image* apply_kernel(struct image* img, int* kernel,
+                           int ksize, float normalize) {
 
+    if (img == NULL || img->pixels == NULL ||
+        kernel == NULL || ksize <= 0) {
+        return NULL;
+    }
+
+    struct image* output = malloc(sizeof(struct image));
+
+    if (output == NULL) {
+        return NULL;
+    }
+
+    output->width = img->width;
+    output->height = img->height;
+
+    output->pixels =
+        malloc(sizeof(struct pixel) *
+               output->width *
+               output->height);
+
+    if (output->pixels == NULL) {
+        free(output);
+        return NULL;
+    }
+
+    int offset = ksize / 2;
+
+    for (int y = 0; y < img->height; y++) {
+
+        for (int x = 0; x < img->width; x++) {
+
+            float sum_r = 0;
+            float sum_g = 0;
+            float sum_b = 0;
+
+            for (int ky = 0; ky < ksize; ky++) {
+
+                for (int kx = 0; kx < ksize; kx++) {
+
+                    int image_y = y + ky - offset;
+                    int image_x = x + kx - offset;
+
+                    /*
+                     * Pixels outside the image are treated as black,
+                     * so they contribute zero.
+                     */
+                    if (image_x < 0 ||
+                        image_x >= img->width ||
+                        image_y < 0 ||
+                        image_y >= img->height) {
+
+                        continue;
+                    }
+
+                    int image_index =
+                        image_y * img->width + image_x;
+
+                    int kernel_index =
+                        ky * ksize + kx;
+
+                    int weight =
+                        kernel[kernel_index];
+
+                    sum_r +=
+                        img->pixels[image_index].r * weight;
+
+                    sum_g +=
+                        img->pixels[image_index].g * weight;
+
+                    sum_b +=
+                        img->pixels[image_index].b * weight;
+                }
+            }
+
+            int output_index =
+                y * output->width + x;
+
+            output->pixels[output_index].r =
+                (int)(sum_r * normalize);
+
+            output->pixels[output_index].g =
+                (int)(sum_g * normalize);
+
+            output->pixels[output_index].b =
+                (int)(sum_b * normalize);
+        }
+    }
+
+    return output;
 }
 

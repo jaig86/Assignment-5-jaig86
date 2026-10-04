@@ -1,1 +1,14 @@
 images/4096x4096.bmp
+cli
+test
+*.o
+log-*.out
+out.bin
+out.bmp
+sky.bin
+test.bin
+mmap-out.bmp
+restored.bmp
+valgrind.log
+vgcore.*
+images/4096x4096.bin
